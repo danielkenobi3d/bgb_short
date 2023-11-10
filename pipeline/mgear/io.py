@@ -3,6 +3,7 @@ from bgb_short.pipeline import environment
 import importlib
 from mgear.shifter import guide_manager
 import pymel.core as pm
+from pathlib import Path
 
 importlib.reload(environment)
 
@@ -15,18 +16,29 @@ def export_template():
 
 def import_template():
     granny = environment.Environment()
-    io.import_guide_template(f'{granny.data}/guides.json')
+    file_path = Path(f'{granny.data}/guides.json')
+    if file_path.exists():
+        io.import_guide_template(f'{granny.data}/guides.json')
+    else:
+        print(f'no guides template found at path {file_path}')
 
 
 def build_from_data_guides():
     granny = environment.Environment()
-    io.import_guide_template(f'{granny.data}/guides.json')
+    file_path = Path(f'{granny.data}/guides.json')
+    if file_path.exists():
+        io.import_guide_template(f'{granny.data}/guides.json')
+    else:
+        print(f'no guides template found at path {file_path}')
 
 
 def build_template():
     # granny = environment.Environment()
-    pm.select('guide')
-    guide_manager.build_from_selection()
+    if pm.ls('guide'):
+        pm.select('guide')
+        guide_manager.build_from_selection()
+    else:
+        print('no guide found on the scene')
 
 
 

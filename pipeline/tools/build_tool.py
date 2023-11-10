@@ -12,11 +12,12 @@ from bgb_short.pipeline.tools.UI import buildForm
 import maya.mel as mel
 from bgb_short.pipeline.mgear import io
 importlib.reload(buildForm)
-
+from bgb_short.pipeline import environment
+from RMPY.core import data_save_load
 # import os
 # import sys
 # sys.path.append(os.path.dirname(__file__))
-
+importlib.reload(environment)
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
@@ -26,14 +27,24 @@ def getMayaWindow():
 class Main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
         super(Main, self).__init__(parent=getMayaWindow())
+        self.env = environment.Environment()
         self.ui = buildForm.Ui_Form()
-        print(self.__class__)
         self.ui.setupUi(self)
         self.setWindowTitle('bgb Short Pipe')
         self.ui.save_rig_button.clicked.connect(io.export_template)
+        self.ui.save_skin_button.clicked.connect(data_save_load.save_skin_cluster)
+        self.ui.save_shapes_button.clicked.connect(data_save_load.save_curve)
 
-    def JointDrawStyle(self):
-        mel.eval("source RMJointDisplay.mel;RMChangeJointDrawStyle();")
+        for index, each in enumerate(self.env.asset_list):
+            self.ui.comboBox.insertItem(index, each)
+        self.ui.comboBox.currentIndexChanged.connect(self.update_env)
+
+
+    def update_env(self):
+        print(f'the index changed {self.ui.comboBox.currentIndex()}')
+        print(self.env.asset_list[self.ui.comboBox.currentIndex()])
+        self.env.asset = self.env.asset_list[self.ui.comboBox.currentIndex()]
+
 
 if __name__ == '__main__':
     w = Main()
