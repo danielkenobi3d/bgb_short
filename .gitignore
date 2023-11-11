@@ -5,6 +5,8 @@
 *.py[cod]
 *.pyc
 
+.DS_Store
+
 # Packages
 *.egg
 *.egg-info

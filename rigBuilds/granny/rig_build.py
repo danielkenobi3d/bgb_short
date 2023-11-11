@@ -40,6 +40,6 @@ def cleanup():
     pass
 
 if __name__ == '__main__':
-    build()
+    import_geometry()
 
 
