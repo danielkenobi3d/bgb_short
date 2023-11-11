@@ -1,1 +1,1 @@
-call pyuic build_form.ui -o ../UI/buildForm.py
+call mayapy build_form.ui -o ../UI/buildForm.py

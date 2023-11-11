@@ -11,12 +11,12 @@ from shiboken2 import wrapInstance
 from bgb_short.pipeline.tools.UI import buildForm
 import maya.mel as mel
 from bgb_short.pipeline.mgear import io
-importlib.reload(buildForm)
 from bgb_short.pipeline import environment
 from RMPY.core import data_save_load
 # import os
 # import sys
 # sys.path.append(os.path.dirname(__file__))
+importlib.reload(buildForm)
 importlib.reload(environment)
 
 def getMayaWindow():
@@ -31,7 +31,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui = buildForm.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('bgb Short Pipe')
-        self.ui.save_rig_button.clicked.connect(io.export_template)
+        self.ui.save_guides_button.clicked.connect(io.export_template)
         self.ui.save_skin_button.clicked.connect(data_save_load.save_skin_cluster)
         self.ui.save_shapes_button.clicked.connect(data_save_load.save_curve)
 

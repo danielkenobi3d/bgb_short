@@ -49,9 +49,9 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QPushButton" name="save_rig_button">
+          <widget class="QPushButton" name="save_guides_button">
            <property name="text">
-            <string>save rig</string>
+            <string>save guides</string>
            </property>
           </widget>
          </item>

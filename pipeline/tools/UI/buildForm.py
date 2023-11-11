@@ -41,9 +41,9 @@ class Ui_Form(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.save_rig_button = QtWidgets.QPushButton(self.tab_2)
-        self.save_rig_button.setObjectName("save_rig_button")
-        self.verticalLayout.addWidget(self.save_rig_button)
+        self.save_guides_button = QtWidgets.QPushButton(self.tab_2)
+        self.save_guides_button.setObjectName("save_guides_button")
+        self.verticalLayout.addWidget(self.save_guides_button)
         self.save_shapes_button = QtWidgets.QPushButton(self.tab_2)
         self.save_shapes_button.setObjectName("save_shapes_button")
         self.verticalLayout.addWidget(self.save_shapes_button)
@@ -60,7 +60,7 @@ class Ui_Form(object):
         self.verticalLayout_3.addWidget(self.tabWidget)
 
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -68,7 +68,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.AssetGroupBox.setTitle(_translate("Form", "Asset build"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "build steps"))
-        self.save_rig_button.setText(_translate("Form", "save rig"))
+        self.save_guides_button.setText(_translate("Form", "save guides"))
         self.save_shapes_button.setText(_translate("Form", "save shapes"))
         self.save_skin_button.setText(_translate("Form", "save skinning"))
         self.save_reference_points.setText(_translate("Form", "save reference points"))
