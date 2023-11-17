@@ -4,13 +4,15 @@ import importlib
 from mgear.shifter import guide_manager
 import pymel.core as pm
 from pathlib import Path
-
+import os
 importlib.reload(environment)
 
 
 def export_template():
     pm.select('guide')
     granny = environment.Environment()
+    if not granny.data.exists():
+        granny.data.mkdir(parents=True, exist_ok=True)
     io.export_guide_template(f'{granny.data}/guides.json')
 
 

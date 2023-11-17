@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 import pymel.core as pm
-
+from bgb_short.pipeline import pipe_config
+import importlib
 
 def filter_right_file(file_list):
     """
@@ -12,7 +13,7 @@ def filter_right_file(file_list):
     file_name_len = 0
     for each in file_list:
         if each.split('.')[-1] in ['mb', 'ma']:
-            if return_file == None:
+            if return_file is None:
                 return_file = each
                 file_name_len = len(each)
             else:
@@ -22,30 +23,54 @@ def filter_right_file(file_list):
     return return_file
 
 
+class ModuleSplit(object):
+    # A very simple class to split the mudles and the function on a path.
+    # it accepts a full path for example rig_build.character.build_rig
+    # and splits this in to module: rig_build.character
+    # and function: build_rig
+    def __init__(self, name_function):
+        self.tokens = name_function.split('.')
+
+    @property
+    def modules(self):
+        return '.'.join(self.tokens[:-1])
+
+    @property
+    def variable(self):
+        return self.tokens[-1]
+
 class Environment(object):
+    asset_module = None
+    inherit_module = None
+    _build_config_file = None
+
     def __init__(self):
-        self.asset_list = ['Grandma', 'Ghost', 'Guardian', 'Rick']
+        super().__init__()
+        self.asset_list = pipe_config.asset_list
         self._env_node = None
         self._asset = None
-        print(f'current_asset: {self.env_node.asset.get()}')
-        self._project_path = 'Z:/06-CLASSE ANIMATION M2/Projects/bgb24/04-ASSETS/Characters'
-        # 'C:/Users/danie/OneDrive/rubika/shortFilm/assets/'
-        self._asset_path = '/bgb24_A_{}'
-        self._model_path = '/bgb24_A_{}_Mod'
-        self._rig_path = '/bgb24_A_{}_Rig'
-        self._data_path = '/data'
+        self._project_path = pipe_config.project_path
+        self._asset_path = pipe_config.asset_path
+        self._model_path = pipe_config.model_path
+        self._rig_path = pipe_config.rig_path
+        self._publish_folder = pipe_config.publish_folder
+        self._data_path = pipe_config.data_path
+
+
+
 
     @property
     def model(self):
-        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self._asset), self._model_path.format(self._asset)))
+        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._model_path.format(self.asset)))
 
     @property
     def rig(self):
-        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self._asset), self._rig_path.format(self._asset)))
+        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._rig_path.format(self.asset)))
 
     @property
     def data(self):
-        return Path("{}{}{}{}".format(self._project_path, self._asset_path.format(self._asset), self._rig_path.format(self._asset), self._data_path))
+        return Path("{}{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._rig_path.format(self.asset), self._data_path))
+
     @property
     def env_node(self):
         if pm.ls('environment'):
@@ -61,7 +86,7 @@ class Environment(object):
 
     @property
     def asset(self):
-        return self._asset
+        return self.env_node.asset.get()
 
     @asset.setter
     def asset(self, asset_value):
@@ -70,13 +95,14 @@ class Environment(object):
            self.env_node.asset.set(asset_value)
         else:
             print(f'not  valid asset {asset_value}, needs to be inside {self.asset_list}')
+
     def get_latest_version(self, modelling=False, rigging=False):
         if modelling == True:
-            list_of_publish_dir = os.listdir(f'{self.model}/_published')
+            list_of_publish_dir = os.listdir(f'{self.model}{self._publish_folder}')
         elif rigging == True:
-            list_of_publish_dir = os.listdir(f'{self.rig}/_published')
+            list_of_publish_dir = os.listdir(f'{self.rig}{self._publish_folder}')
         else:
-            list_of_publish_dir = os.listdir(f'{self.model}/_published')
+            list_of_publish_dir = os.listdir(f'{self.model}{self._publish_folder}')
 
         latest_version_folder = None
         index = 0
@@ -89,9 +115,46 @@ class Environment(object):
                 if current_index > index:
                     index = current_index
                     latest_version_folder = each
-        files_list = os.listdir(f'{self.model}/_published/{latest_version_folder}')
-        return Path(f'{self.model}/_published/{latest_version_folder}/{filter_right_file(files_list)}')
+        files_list = os.listdir(f'{self.model}{self._publish_folder}/{latest_version_folder}')
+        return Path(f'{self.model}{self._publish_folder}/{latest_version_folder}/{filter_right_file(files_list)}')
+    
+    def import_environment_modules(self):
+        self.asset_module = importlib.import_module(f'{pipe_config.modules_path}.{self.asset}')
 
+        if 'inherit' in vars(self.asset_module):
+            self.inherit_module = importlib.import_module(f'{pipe_config.modules_path}.{self.asset_module.inherit}')
+        else:
+            self.inherit_module = importlib.import_module(f'{pipe_config.modules_path}.{pipe_config.default_module}')
+
+        importlib.reload(self.asset_module)
+        importlib.reload(self.inherit_module)
+
+        for each in pkgutil.iter_modules(self.inherit_module.__path__):
+            if not each.ispkg:
+                if each.name.split('_')[-1] == 'config':
+                    print(self.inherit_module.__class__)
+                    print(Path(f'{self.inherit_module.__name__}.{each.name}'))
+                    self.build_config_file = importlib.import_module(f'{self.inherit_module.__name__}.{each.name}')
+        return self.asset_module, self.inherit_module, self.build_config_file
+
+    def get_variables_from_path(self, step_function):
+        # gets variables from path accepts a string in the form of a path and it is going to return the corresponding variable(function)
+        # from the path provided in Context
+
+        function_path = ModuleSplit(step_function)
+        new_module = importlib.import_module(f'{asset_module.__name__}.{function_path.modules}')
+        importlib.reload(new_module)
+        if function_path.variable in dir(new_module):
+            return getattr(new_module, function_path.variable)
+        else:
+            new_module = importlib.import_module(f'{inherit_module.__name__}.{function_path.modules}')
+            importlib.reload(new_module)
+            if function_path.variable in dir(new_module):
+                return getattr(new_module, function_path.variable)
+            else:
+                print(f'couldnt import function  {function_path.variable}\n'
+                      f'from any of this paths {asset_module.__name__} {inherit_module.__name__}')
+                print(dir(inherit_module))
 
 if __name__ == '__main__':
     granny = Environment()
