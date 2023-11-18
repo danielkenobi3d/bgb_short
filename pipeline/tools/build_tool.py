@@ -106,13 +106,13 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         return asset_module, inherit_module, build_config_file
 
     def add_build_steps(self):
-        asset_module, inherit_module, build_config_file = self.import_base_modules()
-        if build_config_file:
-            for each in build_config_file.build_order:
+        self.env.import_environment_modules()
+        if self.env.build_config_file:
+            for each in self.env.build_config_file.build_order:
                 self.build_step_list[-1].evaluate = self.build_step_list.append(BuildStep(each))
-                for step_text, step_function in build_config_file.build[each]:
+                for step_text, step_function in self.env.build_config_file.build[each]:
                     self.build_step_list.append(BuildStep(f'    {step_text}'))
-                    self.build_step_list[-1].evaluate = env.get_variables_from_path(step_function)
+                    self.build_step_list[-1].evaluate = self.env.get_variables_from_path(step_function[0])
 
         for each in self.build_step_list:
             self.ui.listWidget.addItem(each)
