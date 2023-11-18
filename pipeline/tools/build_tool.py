@@ -75,7 +75,10 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         if run_till.is_enabled:
             if run_till.evaluate is not None:
                 index = self.ui.listWidget.currentRow()
+            else:
+                print('run button evaluate is none')
         else:
+            print('button not enabled')
             return
 
         for each_widget in self.build_step_list[:index+1]:
@@ -109,7 +112,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.env.import_environment_modules()
         if self.env.build_config_file:
             for each in self.env.build_config_file.build_order:
-                self.build_step_list[-1].evaluate = self.build_step_list.append(BuildStep(each))
+                self.build_step_list.append(BuildStep(each))
                 for step_text, step_function in self.env.build_config_file.build[each]:
                     self.build_step_list.append(BuildStep(f'    {step_text}'))
                     self.build_step_list[-1].evaluate = self.env.get_variables_from_path(step_function[0])

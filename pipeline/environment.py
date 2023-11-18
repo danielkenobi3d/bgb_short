@@ -143,12 +143,12 @@ class Environment(object):
         self.import_environment_modules()
         function_path = ModuleSplit(step_function)
         new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.modules}')
-        importlib.reload(new_module)
+        # importlib.reload(new_module)
         if function_path.variable in dir(new_module):
             return getattr(new_module, function_path.variable)
         else:
             new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
-            importlib.reload(new_module)
+            # importlib.reload(new_module)
             if function_path.variable in dir(new_module):
                 return getattr(new_module, function_path.variable)
             else:
