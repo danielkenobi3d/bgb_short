@@ -2,8 +2,8 @@
 build_order = ['source', 'rig', 'load data', 'finalize']
 build = {
     'source': [
-        ('Import geometry', ['.import_guiderig_build.import_geometry']),
-        ('Import guides', ['rig_builds'])
+        ('Import geometry', ['rig_build.import_geometry']),
+        ('Import guides', ['rig_build.import_guides'])
         ],
     'rig': [
         ('build rig', ['rig_build.build_rig']),
