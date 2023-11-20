@@ -21,6 +21,8 @@ from pathlib import Path
 importlib.reload(io)
 importlib.reload(pipe_config)
 importlib.reload(environment)
+importlib.reload(buildForm)
+importlib.reload(data_save_load)
 
 
 class BuildStep(QListWidgetItem):
@@ -57,18 +59,26 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.save_guides_button.clicked.connect(io.export_template)
         self.ui.save_skin_button.clicked.connect(data_save_load.save_skin_cluster)
         self.ui.save_shapes_button.clicked.connect(data_save_load.save_curve)
-        self.ui.save_reference_points.clicked.connect(data_save_load.export_maya_file)
+        self.ui.save_reference_file_btn.clicked.connect(self.save_reference_file)
 
         for index, each in enumerate(self.env.asset_list):
             self.ui.comboBox.insertItem(index, each)
         self.ui.comboBox.currentIndexChanged.connect(self.update_env)
-        self.add_build_steps()
         self.ui.listWidget.itemDoubleClicked.connect(self.build_clicked)
+        self.ui.file_name_lineEdit.setText('reference_points')
+        self.add_build_steps()
 
     def update_env(self):
-        print(f'the index changed {self.ui.comboBox.currentIndex()}')
-        print(self.env.asset_list[self.ui.comboBox.currentIndex()])
+        # print(f'the index changed {self.ui.comboBox.currentIndex()}')
+        # print(self.env.asset_list[self.ui.comboBox.currentIndex()])
+        self.ui.listWidget.clear()
         self.env.asset = self.env.asset_list[self.ui.comboBox.currentIndex()]
+        self.build_step_list = []
+        self.add_build_steps()
+
+    def save_reference_file(self):
+        data_save_load.export_maya_file(file_name=self.ui.file_name_lineEdit.text())
+
 
     def build_clicked(self):
         index = 0
@@ -88,29 +98,11 @@ class Main(MayaQWidgetDockableMixin, QDialog):
                     each_widget.evaluate()
                 each_widget.toggle_item()
 
-    def import_base_modules(self):
-        env = environment.Environment()
-        asset_module = importlib.import_module(f'{pipe_config.modules_path}.{env.asset}')
-
-        if 'inherit' in vars(asset_module):
-            inherit_module = importlib.import_module(f'{pipe_config.modules_path}.{asset_module.inherit}')
-        else:
-            inherit_module = importlib.import_module(f'{pipe_config.modules_path}.{pipe_config.default_module}')
-
-        importlib.reload(asset_module)
-        importlib.reload(inherit_module)
-
-        build_config_file = None
-        for each in pkgutil.iter_modules(inherit_module.__path__):
-            if not each.ispkg:
-                if each.name.split('_')[-1] == 'config':
-                    print(inherit_module.__class__)
-                    print(Path(f'{inherit_module.__name__}.{each.name}'))
-                    build_config_file = importlib.import_module(f'{inherit_module.__name__}.{each.name}')
-        return asset_module, inherit_module, build_config_file
-
     def add_build_steps(self):
         self.env.import_environment_modules()
+        from pprint import pprint as pp
+        pp(self.env.build_config_file.build)
+
         if self.env.build_config_file:
             for each in self.env.build_config_file.build_order:
                 self.build_step_list.append(BuildStep(each))
@@ -120,11 +112,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
 
         for each in self.build_step_list:
             self.ui.listWidget.addItem(each)
-
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+prefix_geometry_list = []
+
 definition = dict(
     jaw=dict(
         type='blend_shape_definition',
@@ -150,6 +152,14 @@ correctives_dict = dict(
             order=['rotateZ']
             ),
 )
+
+direct_blendshape = {
+    'character': 'C_BODY_001_HIGH'
+}
+
+jaw_layer = [u'character', u'lowRez', u'Teeth', u'Dentine', u'Tongue', u'Gums']
+
+
 if __name__ == '__main__':
     import pymel.core as pm
     selection_list=[]

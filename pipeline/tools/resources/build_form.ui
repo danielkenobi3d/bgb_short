@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
-    <height>437</height>
+    <width>199</width>
+    <height>299</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,16 +37,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QListWidget" name="listWidget">
-         <item>
-          <property name="text">
-           <string>basic</string>
-          </property>
-          <property name="flags">
-           <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
-          </property>
-         </item>
-        </widget>
+        <widget class="QListWidget" name="listWidget"/>
        </item>
       </layout>
      </widget>
@@ -79,10 +70,22 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="save_reference_points_btn">
-           <property name="text">
-            <string>save reference points</string>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>Reference file</string>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QPushButton" name="save_reference_file_btn">
+              <property name="text">
+               <string>save reference file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="file_name_lineEdit"/>
+            </item>
+           </layout>
           </widget>
          </item>
          <item>

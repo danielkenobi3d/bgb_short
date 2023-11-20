@@ -5,6 +5,7 @@ from RMPY.core import search_hierarchy
 import pymel.core as pm
 import importlib
 from pathlib import Path
+from bgb_short.rigBuilds.default_character import rig_facial
 
 
 def import_geometry():
@@ -17,7 +18,12 @@ def import_guides():
 
 
 def import_reference_points():
-    data_save_load.import_maya_file()
+    for each in data_save_load.available_maya_files():
+        data_save_load.import_maya_file(each)
+
+
+def facial_rig():
+    rig_facial.build()
 
 
 def build_rig():
@@ -55,6 +61,6 @@ def custom_finalize():
 
 
 if __name__ == '__main__':
-    import_geometry()
+    import_reference_points()
 
 

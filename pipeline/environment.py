@@ -49,7 +49,7 @@ class ModuleSplit(object):
 class Environment(object):
     asset_module = None
     inherit_module = None
-    _build_config_file = None
+    build_config_file = None
 
     def __init__(self):
         super().__init__()
@@ -62,6 +62,7 @@ class Environment(object):
         self._rig_path = pipe_config.rig_path
         self._publish_folder = pipe_config.publish_folder
         self._data_path = pipe_config.data_path
+
 
 
     @property
@@ -133,13 +134,18 @@ class Environment(object):
 
         importlib.reload(self.asset_module)
         importlib.reload(self.inherit_module)
-
-        for each in pkgutil.iter_modules(self.inherit_module.__path__):
+        self.build_config_file = None
+        for each in pkgutil.iter_modules(self.asset_module.__path__):
             if not each.ispkg:
                 if each.name.split('_')[-1] == 'config':
-                    print(self.inherit_module.__class__)
-                    print(Path(f'{self.inherit_module.__name__}.{each.name}'))
-                    self.build_config_file = importlib.import_module(f'{self.inherit_module.__name__}.{each.name}')
+                    self.build_config_file = importlib.import_module(f'{self.asset_module.__name__}.{each.name}')
+        if not self.build_config_file:
+            for each in pkgutil.iter_modules(self.inherit_module.__path__):
+                if not each.ispkg:
+                    if each.name.split('_')[-1] == 'config':
+                        self.build_config_file = importlib.import_module(f'{self.inherit_module.__name__}.{each.name}')
+
+        importlib.reload(self.build_config_file)
         return self.asset_module, self.inherit_module, self.build_config_file
 
     def get_variables_from_path(self, step_function):
@@ -153,12 +159,12 @@ class Environment(object):
         except ModuleNotFoundError as e:
             print(e)
             new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
-        # importlib.reload(new_module)
+        importlib.reload(new_module)
         if function_path.variable in dir(new_module):
             return getattr(new_module, function_path.variable)
         else:
             new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
-            # importlib.reload(new_module)
+            importlib.reload(new_module)
             if function_path.variable in dir(new_module):
                 return getattr(new_module, function_path.variable)
             else:
