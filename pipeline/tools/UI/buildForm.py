@@ -33,6 +33,9 @@ class Ui_Form(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.listWidget = QtWidgets.QListWidget(self.tab)
         self.listWidget.setObjectName("listWidget")
+        item = QtWidgets.QListWidgetItem()
+        item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsDragEnabled|QtCore.Qt.ItemIsUserCheckable)
+        self.listWidget.addItem(item)
         self.verticalLayout_4.addWidget(self.listWidget)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
@@ -60,13 +63,18 @@ class Ui_Form(object):
         self.verticalLayout_3.addWidget(self.tabWidget)
 
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.AssetGroupBox.setTitle(_translate("Form", "Asset build"))
+        __sortingEnabled = self.listWidget.isSortingEnabled()
+        self.listWidget.setSortingEnabled(False)
+        item = self.listWidget.item(0)
+        item.setText(_translate("Form", "basic"))
+        self.listWidget.setSortingEnabled(__sortingEnabled)
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "build steps"))
         self.save_guides_button.setText(_translate("Form", "save guides"))
         self.save_shapes_button.setText(_translate("Form", "save shapes"))

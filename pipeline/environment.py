@@ -1,9 +1,15 @@
 import os
 from pathlib import Path
 import pymel.core as pm
-from bgb_short.pipeline import pipe_config
 import importlib
 import pkgutil
+
+try:
+    import pipe_config
+except:
+    from bgb_short.pipeline import pipe_config
+
+importlib.reload(pipe_config)
 def filter_right_file(file_list):
     """
     finds the correct file path to import it will import the smallest in length maya file
@@ -39,6 +45,7 @@ class ModuleSplit(object):
     def variable(self):
         return self.tokens[-1]
 
+
 class Environment(object):
     asset_module = None
     inherit_module = None
@@ -55,8 +62,6 @@ class Environment(object):
         self._rig_path = pipe_config.rig_path
         self._publish_folder = pipe_config.publish_folder
         self._data_path = pipe_config.data_path
-
-
 
 
     @property
@@ -142,7 +147,12 @@ class Environment(object):
         # from the path provided in Context
         self.import_environment_modules()
         function_path = ModuleSplit(step_function)
-        new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.modules}')
+        try:
+            print(f'{self.asset_module.__name__}.{function_path.modules}')
+            new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.modules}')
+        except ModuleNotFoundError as e:
+            print(e)
+            new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
         # importlib.reload(new_module)
         if function_path.variable in dir(new_module):
             return getattr(new_module, function_path.variable)
@@ -155,6 +165,7 @@ class Environment(object):
                 print(f'couldnt import function  {function_path.variable}\n'
                       f'from any of this paths {self.asset_module.__name__} {self.inherit_module.__name__}')
                 print(dir(self.inherit_module))
+
 
 if __name__ == '__main__':
     granny = Environment()

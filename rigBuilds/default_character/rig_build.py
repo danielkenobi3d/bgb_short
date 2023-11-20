@@ -16,6 +16,10 @@ def import_guides():
     io.import_template()
 
 
+def import_reference_points():
+    data_save_load.import_maya_file()
+
+
 def build_rig():
     io.build_template()
 

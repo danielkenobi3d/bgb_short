@@ -6,137 +6,122 @@ from maya.app.general.mayaMixin import MayaQWidgetDockableMixin
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
-from PySide2 import __version__
 from shiboken2 import wrapInstance
-from RMPY.Tools.QT5.ui import FormFacialRig
+from bgb_short.pipeline.tools.UI import facialRigForm
 import maya.mel as mel
 import os
+import pymel.core as pm
 from RMPY import RMblendShapesTools
-from RMPY import RMRigTools
-from RMPY.FacialRig import FacialConfigurationNew as FacialConfiguration
-from RMPY import RMParametersManager
 from bgb_short.pipeline import environment
-from bgb_short.pipeline import pipe_config
+
 import importlib
 importlib.reload(environment)
-
-Dictionaries = {
-                 'lidShapes'        :FacialConfiguration.lidShapes,#0
-                 'EyeBallPupil'     :FacialConfiguration.EyeBallPupil,#1
-                 'Cristaline'       :FacialConfiguration.Cristaline,#2
-                 'EyeJawJoints'     :FacialConfiguration.EyeJawJoints,#4
-                 #'mouthSecondarys'  :FacialConfiguration.mouthSecondarys,#3
-                 'mouth'            :FacialConfiguration.mouth,#5
-                 'Cheeks'           :FacialConfiguration.Cheeks,#6
-                 'mouthMover'       :FacialConfiguration.mouthMover,#7
-                 'Nose'             :FacialConfiguration.Nose,#8
-                 'Furrow'           :FacialConfiguration.Furrow,#9
-                 #'secondaryEyeBrow' :FacialConfiguration.secondaryEyeBrow,#10
-                 'EyeBrow'          :FacialConfiguration.EyeBrow
-                }
+importlib.reload(facialRigForm)
 
 
 def getMayaWindow():
     ptr = mui.MQtUtil.mainWindow()
     return wrapInstance(int(ptr), QMainWindow)
 
-class main(MayaQWidgetDockableMixin,QDialog):
+
+class Main(MayaQWidgetDockableMixin, QDialog):
     def __init__(self, parent=None):
-        super(main, self).__init__(parent=getMayaWindow())
-        self.ui=FormFacialRig.Ui_Form()
+        super(Main, self).__init__(parent=getMayaWindow())
+        self.ui = facialRigForm.Ui_Form()
         self.ui.setupUi(self)
         self.setWindowTitle('FacialRig')
 
         self.env = environment.Environment()
-        self.dictionary = self.env.get_variables_from_path(pipe_config.default_facial_definition)
+        self.dictionary = self.env.get_variables_from_path(environment.pipe_config.default_facial_definition)
+        from pprint import pprint as pp
+        pp(self.dictionary)
 
-        self.ui.CheckBtn.clicked.connect(self.CheckBtnPressed)
+        self.ui.CheckBtn.clicked.connect(self.check_button_pressed)
         # self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
         # self.ui.DeleteAttributesBtn.clicked.connect(self.deleteAttributes)
-        self.ui.ListCBx.currentIndexChanged.connect(self.comboBoxChanged)
-        self.ui.renameRightBtn.clicked.connect(self.renameRightBtn)
-        self.ui.LinkAllBtn.clicked.connect(self.linkAllDictionaries)
-
-        self.ui.UsePrefixChkBx.stateChanged.connect(self.usePrefixChkBxStateChanged)
+        self.ui.ListCBx.currentIndexChanged.connect(self.combo_box_changed)
+        self.ui.renameRightBtn.clicked.connect(self.rename_right_btn)
+        self.ui.LinkAllBtn.clicked.connect(self.link_all_dictionaries)
+        self.ui.createMissingBtn.clicked.connect(self.create_missing_shapes)
+        self.ui.UseSufixChkBx.stateChanged.connect(self.use_sufix_chk_bx_state_changed)
         for eachItem in sorted(self.dictionary):
             self.ui.ListCBx.addItem(eachItem)
-        self.ui.LinkSelectedBtn.clicked.connect(self.connectDictionary)
+        self.ui.LinkSelectedBtn.clicked.connect(self.connect_dictionary)
         self.Manager = RMblendShapesTools.BSManager()
 
-        self.ui.PrefixLineEdit.textChanged.connect(self.CheckBtnPressed)
+        self.ui.PrefixLineEdit.textChanged.connect(self.check_button_pressed)
 
-    def usePrefixChkBxStateChanged(self):
-        if self.ui.UsePrefixChkBx.checkState() == Qt.CheckState.Checked:
+    def use_sufix_chk_bx_state_changed(self):
+        if self.ui.UseSufixChkBx.checkState() == Qt.CheckState.Checked:
             self.ui.PrefixLineEdit.setEnabled(True)
         else:
             self.ui.PrefixLineEdit.setDisabled(True)
-        self.CheckBtnPressed()
+        self.check_button_pressed()
 
-    def renameRightBtn(self):
+    def rename_right_btn(self):
         selection = cmds.ls(selection=True)
         for i in selection:
-            cmds.rename (i , "R" + i[1:-1])
+            cmds.rename(i, "R" + i[1:-1])
 
-    def comboBoxChanged(self):
-        self.CheckBtnPressed()
+    def combo_box_changed(self):
+        self.check_button_pressed()
 
-    def connectDictionary(self):
+    def connect_dictionary(self):
         if self.ui.PrefixLineEdit.isEnabled():
-            objectNamePrefix = self.ui.PrefixLineEdit.text()
+            object_name_prefix = self.ui.PrefixLineEdit.text()
         else:
-            objectNamePrefix=''
+            object_name_prefix = ''
 
+        link_dictionary = self.dictionary[self.ui.ListCBx.currentText()]
+        self.Manager.AppyBlendShapeDefinition(link_dictionary,  objectPrefix=object_name_prefix)
 
-        linkDictionary = self.dictionary[self.ui.ListCBx.currentText()]
-        self.Manager.AppyBlendShapeDefinition(linkDictionary,  objectPrefix = objectNamePrefix)
+    def create_missing_shapes(self):
+        self.check_button_pressed()
+        sufix = self.ui.PrefixLineEdit.text()
+        if sufix:
+            base_geo = sufix
+        else:
+            base_geo = self.dictionary[self.ui.ListCBx.currentText()]['baseMesh']
+        if pm.objExists(base_geo):
+            for each in range(self.ui.listWidget.count()):
+                current_item = self.ui.listWidget.item(each)
+                pm.duplicate(base_geo, name=current_item.text())
+            self.check_button_pressed()
+        else:
+            print(f"base object {base_geo} doesn't exists")
 
-    def linkAllDictionaries(self):
+    def link_all_dictionaries(self):
         if self.ui.PrefixLineEdit.isEnabled():
-            objectNamePrefix = self.ui.PrefixLineEdit.text()
+            object_name_prefix = self.ui.PrefixLineEdit.text()
         else:
-            objectNamePrefix=''
+            object_name_prefix = ''
 
         for eachDic in self.dictionary:
-            self.Manager.AppyBlendShapeDefinition(self.dictionary[eachDic],  objectPrefix = objectNamePrefix)
+            self.Manager.AppyBlendShapeDefinition(self.dictionary[eachDic],  objectPrefix=object_name_prefix)
 
-    def deleteAttributes(self):
-        selection = cmds.ls(selection = True)
-        for eachObject in selection:
-            RMParametersManager.deleteAttributes(eachObject)
-
-    def CheckBtnPressed(self):
+    def check_button_pressed(self):
         if self.ui.PrefixLineEdit.isEnabled():
-            objectNamePrefix = self.ui.PrefixLineEdit.text()
+            object_name_prefix = self.ui.PrefixLineEdit.text()
         else:
-            objectNamePrefix = ''
+            object_name_prefix = ''
         self.ui.listWidget.clear()
-        eachDic = self.dictionary[self.ui.ListCBx.currentText()]
-        for eachDefinition in eachDic:
-            print(eachDefinition)
-            if eachDic[eachDefinition]['Type'] == 'blendShapeDefinition':
-                array_prefix = []
-                if eachDic[eachDefinition]['isSymetrical'] == True:
-                    array_prefix = ["L","R"]
-                else :
-                    array_prefix = [""]
+        each_dic = self.dictionary[self.ui.ListCBx.currentText()]
+        # for eachDefinition in eachDic:
+        # print(eachDefinition)
+        if each_dic['type'] == 'blend_shape_definition':
+            array_prefix = []
+            if each_dic['isSymetrical']:
+                array_prefix = "LR"
                 for eachPrefix in array_prefix:
-                    for eachBlendShape in sorted(eachDic[eachDefinition]['blendShapes']):
-                        if not cmds.objExists(eachPrefix + objectNamePrefix + eachBlendShape):
-                            self.ui.listWidget.addItem(eachPrefix + objectNamePrefix + eachBlendShape)
-
-    def ImportFacialInterfaceBtnPressed(self):
-        path = os.path.dirname(RMRigTools.__file__)
-        final_path = os.path.join(f"{path}\FacialRig\RigShapes\FacialInterface.mb")
-
-        if os.path.isfile(final_path):
-            cmds.file(final_path, i=True, type="mayaBinary",
-                      ignoreVersion=True, mergeNamespacesOnClash=False,
-                      rpr="", pr=False)
-        else:
-            print(f"archivo de RigFacial No encontrado {final_path}")
-            return None
+                    for eachBlendShape in sorted(each_dic['blendShapes']):
+                        if not cmds.objExists(f'{eachPrefix}{eachBlendShape[1:]}{object_name_prefix}'):
+                            self.ui.listWidget.addItem(f'{eachPrefix}{eachBlendShape[1:]}{object_name_prefix}')
+            else:
+                for eachBlendShape in sorted(each_dic['blendShapes']):
+                    if not cmds.objExists(f'{eachBlendShape}{object_name_prefix}'):
+                        self.ui.listWidget.addItem(f'{eachBlendShape}{object_name_prefix}')
 
 
 if __name__ == '__main__':
-    w = main()
+    w = Main()
     w.show()

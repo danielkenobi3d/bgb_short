@@ -57,6 +57,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.save_guides_button.clicked.connect(io.export_template)
         self.ui.save_skin_button.clicked.connect(data_save_load.save_skin_cluster)
         self.ui.save_shapes_button.clicked.connect(data_save_load.save_curve)
+        self.ui.save_reference_points.clicked.connect(data_save_load.export_maya_file)
 
         for index, each in enumerate(self.env.asset_list):
             self.ui.comboBox.insertItem(index, each)
