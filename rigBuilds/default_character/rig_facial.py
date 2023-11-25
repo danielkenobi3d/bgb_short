@@ -24,8 +24,8 @@ def create_facial_rig():
     rigFacial.RigFacial(facial_definition.definition,
                         prefix_geometry_list=facial_definition.prefix_geometry_list)
 
-    pm.parentConstraint('C_joint00_head_sknjnt', facial_controls.rig_system.controls, mo=True)
-    pm.scaleConstraint('C_joint00_head_sknjnt', facial_controls.rig_system.controls, mo=True)
+    pm.parentConstraint('neck_C0_head_jnt', facial_controls.rig_system.controls, mo=True)
+    pm.scaleConstraint('neck_C0_head_jnt', facial_controls.rig_system.controls, mo=True)
 
     pm.setAttr('character.visibility', False)
     for each in facial_definition.direct_blendshape:

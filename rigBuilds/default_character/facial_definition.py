@@ -157,7 +157,7 @@ direct_blendshape = {
     'character': 'C_BODY_001_HIGH'
 }
 
-jaw_layer = [u'character', u'lowRez', u'Teeth', u'Dentine', u'Tongue', u'Gums']
+jaw_layer = [u'character']
 
 
 if __name__ == '__main__':
