@@ -32,9 +32,8 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.setWindowTitle('FacialRig')
 
         self.env = environment.Environment()
-        self.dictionary = self.env.get_variables_from_path(environment.pipe_config.default_facial_definition)
+        self.dictionary = self.env.get_variables_from_path(environment.pipe_config.default_facial_definition).definition
         from pprint import pprint as pp
-        pp(self.dictionary)
 
         self.ui.CheckBtn.clicked.connect(self.check_button_pressed)
         # self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
