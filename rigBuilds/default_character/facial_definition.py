@@ -63,6 +63,7 @@ definition = dict(
                          LInBrowUp={'connection': 'browIn', 'value': 10},
                          LInBrowDwn={'connection': 'browIn', 'value': -10},
                          LeyesCls={'connection': 'eyeCls', 'value': 10},
+                         LeyesCls50={'connection': 'eyeCls', 'value': 5},
                          LeyesOpen={'connection': 'eyeCls', 'value': -10},
 
                          ),
