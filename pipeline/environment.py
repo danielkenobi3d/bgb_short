@@ -153,12 +153,21 @@ class Environment(object):
         # from the path provided in Context
         self.import_environment_modules()
         function_path = ModuleSplit(step_function)
-        try:
-            print(f'{self.asset_module.__name__}.{function_path.modules}')
-            new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.modules}')
-        except ModuleNotFoundError as e:
-            print(e)
-            new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
+        print(function_path.modules)
+        if function_path.modules:
+            try:
+                new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.modules}')
+            except ModuleNotFoundError as e:
+                print(f'module not found {e}')
+                new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.modules}')
+        else:
+            try:
+                new_module = importlib.import_module(f'{self.asset_module.__name__}.{function_path.variable}')
+                return new_module
+            except ModuleNotFoundError as e:
+                new_module = importlib.import_module(f'{self.inherit_module.__name__}.{function_path.variable}')
+                return new_module
+
         importlib.reload(new_module)
         if function_path.variable in dir(new_module):
             return getattr(new_module, function_path.variable)
@@ -175,10 +184,8 @@ class Environment(object):
 
 if __name__ == '__main__':
     granny = Environment()
-    print(granny.data)
-    print(granny.model)
-    print(granny.rig)
-    print(granny.get_latest_version(modelling=True))
+    facial_definition = granny.get_variables_from_path('facial_definition')
+    print(facial_definition.definition)
 
 
 

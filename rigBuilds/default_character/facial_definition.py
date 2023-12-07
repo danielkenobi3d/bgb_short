@@ -63,6 +63,7 @@ definition = dict(
                          LInBrowUp={'connection': 'browIn', 'value': 10},
                          LInBrowDwn={'connection': 'browIn', 'value': -10},
                          LeyesCls={'connection': 'eyeCls', 'value': 10},
+                         LeyesCls50={'connection': 'eyeCls', 'value': 5},
                          LeyesOpen={'connection': 'eyeCls', 'value': -10},
 
                          ),
@@ -157,7 +158,7 @@ direct_blendshape = {
     'character': 'C_BODY_001_HIGH'
 }
 
-jaw_layer = [u'character', u'lowRez', u'Teeth', u'Dentine', u'Tongue', u'Gums']
+jaw_layer = [u'character']
 
 
 if __name__ == '__main__':
