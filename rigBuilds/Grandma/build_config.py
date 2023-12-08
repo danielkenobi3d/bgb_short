@@ -7,7 +7,7 @@ build = {
         ],
     'rig': [
         ('build rig', ['rig_build.build_rig']),
-        ('facial rig', ['rig_build.facial_rig']),
+        # ('facial rig', ['rig_build.facial_rig']),
         ('custom rig', ['rig_build.custom_rig'])
         ],
     'load data': [
