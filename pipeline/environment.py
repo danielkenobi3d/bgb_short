@@ -109,7 +109,7 @@ class Environment(object):
             list_of_publish_dir = os.listdir(f'{self.rig}{self._publish_folder}')
         else:
             list_of_publish_dir = os.listdir(f'{self.model}{self._publish_folder}')
-
+        print(f'loading {list_of_publish_dir}')
         latest_version_folder = None
         index = 0
         for each in list_of_publish_dir:

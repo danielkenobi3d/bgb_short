@@ -1,8 +1,8 @@
 import os
 
 asset_list = ['Grandma', 'Ghost', 'Guardian', 'Rick']
-project_path = 'C:/Users/danie/OneDrive/rubika/shortFilm/assets/'
-# 'Z:/06-CLASSE ANIMATION M2/Projects/bgb24/04-ASSETS/Characters'
+project_path = 'Z:/06-CLASSE ANIMATION M2/Projects/bgb24/04-ASSETS/Characters'
+
 asset_path = '/bgb24_A_{}'
 model_path = '/bgb24_A_{}_Mod'
 rig_path = '/bgb24_A_{}_Rig'
