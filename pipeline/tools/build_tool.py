@@ -79,7 +79,6 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     def save_reference_file(self):
         data_save_load.export_maya_file(file_name=self.ui.file_name_lineEdit.text())
 
-
     def build_clicked(self):
         index = 0
         run_till = self.ui.listWidget.currentItem()
