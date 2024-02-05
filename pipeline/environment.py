@@ -10,6 +10,7 @@ except:
     from bgb_short.pipeline import pipe_config
 
 importlib.reload(pipe_config)
+
 def filter_right_file(file_list):
     """
     finds the correct file path to import it will import the smallest in length maya file
@@ -56,26 +57,29 @@ class Environment(object):
         self.asset_list = pipe_config.asset_list
         self._env_node = None
         self._asset = None
+        self._asset_type = None
         self._project_path = pipe_config.project_path
         self._asset_path = pipe_config.asset_path
         self._model_path = pipe_config.model_path
         self._rig_path = pipe_config.rig_path
         self._publish_folder = pipe_config.publish_folder
         self._data_path = pipe_config.data_path
-
-
+        print(f'initializing... {self.env_node}')
 
     @property
     def model(self):
-        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._model_path.format(self.asset)))
+        return Path(self._project_path, self._asset_type, self._asset_path.format(self.asset),
+                    self._model_path.format(self.asset))
 
     @property
     def rig(self):
-        return Path("{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._rig_path.format(self.asset)))
+        return Path(self._project_path, self._asset_type, self._asset_path.format(self.asset),
+                    self._rig_path.format(self.asset))
 
     @property
     def data(self):
-        return Path("{}{}{}{}".format(self._project_path, self._asset_path.format(self.asset), self._rig_path.format(self.asset), self._data_path))
+        return Path(self._project_path, self._asset_type, self._asset_path.format(self.asset),
+                    self._rig_path.format(self.asset), self._data_path)
 
     @property
     def env_node(self):
@@ -88,6 +92,7 @@ class Environment(object):
             if not self._asset:
                 self._asset = self.asset_list[0]
             self._env_node.asset.set(self._asset, type='string')
+        self._set_asset_type()
         return self._env_node
 
     @property
@@ -99,16 +104,23 @@ class Environment(object):
         if asset_value in self.asset_list:
            self._asset = asset_value
            self.env_node.asset.set(asset_value)
+           self._set_asset_type()
         else:
             print(f'not  valid asset {asset_value}, needs to be inside {self.asset_list}')
 
+    def _set_asset_type(self):
+        file_path = Path(pipe_config.project_path)
+        for each_folder in os.listdir(file_path):
+            if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
+                self._asset_type = each_folder
+
     def get_latest_version(self, modelling=False, rigging=False):
         if modelling == True:
-            list_of_publish_dir = os.listdir(f'{self.model}{self._publish_folder}')
+            list_of_publish_dir = os.listdir(Path(self.model, self._publish_folder))
         elif rigging == True:
-            list_of_publish_dir = os.listdir(f'{self.rig}{self._publish_folder}')
+            list_of_publish_dir = os.listdir(Path(self.rig, self._publish_folder))
         else:
-            list_of_publish_dir = os.listdir(f'{self.model}{self._publish_folder}')
+            list_of_publish_dir = os.listdir(Path(self.model, self._publish_folder))
         print(f'loading {list_of_publish_dir}')
         latest_version_folder = None
         index = 0
@@ -121,8 +133,8 @@ class Environment(object):
                 if current_index > index:
                     index = current_index
                     latest_version_folder = each
-        files_list = os.listdir(f'{self.model}{self._publish_folder}/{latest_version_folder}')
-        return Path(f'{self.model}{self._publish_folder}/{latest_version_folder}/{filter_right_file(files_list)}')
+        files_list = os.listdir(Path(self.model, self._publish_folder, latest_version_folder))
+        return Path(self.model, self._publish_folder, latest_version_folder, filter_right_file(files_list))
     
     def import_environment_modules(self):
         self.asset_module = importlib.import_module(f'{pipe_config.modules_path}.{self.asset}')
@@ -149,7 +161,8 @@ class Environment(object):
         return self.asset_module, self.inherit_module, self.build_config_file
 
     def get_variables_from_path(self, step_function):
-        # gets variables from path accepts a string in the form of a path and it is going to return the corresponding variable(function)
+        # gets variables from path accepts a string in the form of a path and it is going to return the corresponding
+        # variable(function)
         # from the path provided in Context
         self.import_environment_modules()
         function_path = ModuleSplit(step_function)
@@ -183,9 +196,14 @@ class Environment(object):
 
 
 if __name__ == '__main__':
-    granny = Environment()
-    facial_definition = granny.get_variables_from_path('facial_definition')
-    print(facial_definition.definition)
+    env = Environment()
+    facial_definition = env.get_variables_from_path('facial_definition')
+    print(env.rig)
+    print(env.model)
+    print(str(env.get_latest_version(modelling=True)))
+    import pymel.core as pm
+    pm.importFile(env.get_latest_version(modelling=True))
+    # print(facial_definition.definition)
 
 
 

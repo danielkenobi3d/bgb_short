@@ -17,25 +17,24 @@ def export_template():
 
 
 def import_template():
-    granny = environment.Environment()
-    file_path = Path(f'{granny.data}/guides.json')
+    asset_env = environment.Environment()
+    file_path = Path(f'{asset_env.data}/guides.json')
     if file_path.exists():
-        io.import_guide_template(f'{granny.data}/guides.json')
+        io.import_guide_template(f'{asset_env.data}/guides.json')
     else:
         print(f'no guides template found at path {file_path}')
 
 
 def build_from_data_guides():
-    granny = environment.Environment()
-    file_path = Path(f'{granny.data}/guides.json')
+    asset_env = environment.Environment()
+    file_path = Path(f'{asset_env.data}/guides.json')
     if file_path.exists():
-        io.import_guide_template(f'{granny.data}/guides.json')
+        io.import_guide_template(f'{asset_env.data}/guides.json')
     else:
         print(f'no guides template found at path {file_path}')
 
 
 def build_template():
-    # granny = environment.Environment()
     if pm.ls('guide'):
         pm.select('guide')
         guide_manager.build_from_selection()
