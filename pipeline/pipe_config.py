@@ -1,6 +1,6 @@
 import os
 
-asset_list = ['Grandma', 'Ghost', 'Guardian', 'Rick']
+asset_list = ['Grandma', 'Ghost', 'Guardian', 'Rick', 'grapplinHook']
 asset_types = ['characters', 'prop']
 project_path = 'Z:/07_CLASSE_ANIMATION_M1/Rigging/rig_build/assets'
 # 'Z:/06-CLASSE ANIMATION M2/Projects/bgb24/04-ASSETS/Characters'

@@ -4,7 +4,6 @@ from RMPY.core import data_save_load
 from RMPY.core import search_hierarchy
 from RMPY.core import controls
 import pymel.core as pm
-import importlib
 from pathlib import Path
 from bgb_short.rigBuilds.default_character import rig_facial
 
@@ -37,7 +36,7 @@ def custom_rig():
 
 def load_skinning_data():
     env = environment.Environment()
-    root_node = pm.ls('*_GEO_GRP')[0]
+    root_node = pm.ls('geo', '*_GEO_GRP')[0]
     print(root_node)
     list_of_objects = search_hierarchy.shape_type_in_hierarchy(root_node)
     for each in list_of_objects:
@@ -55,7 +54,15 @@ def load_shapes_data():
 
 
 def cleanup():
-    pass
+    all_root_nodes = pm.ls('|*', lockedNodes=False)
+    for each in all_root_nodes:
+        if str(each) not in ['persp', 'top', 'front', 'side']:
+            if str(each) in ['environment', 'geo']:
+                each.setParent('rig')
+            else:
+                pm.delete(each)
+    for each in pm.ls('*_settings*_pnt'):
+        each.visibility.set(False)
 
 
 def custom_finalize():
