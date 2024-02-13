@@ -105,14 +105,16 @@ class Environment(object):
            self._asset = asset_value
            self.env_node.asset.set(asset_value)
            self._set_asset_type()
-        else:
-            print(f'not  valid asset {asset_value}, needs to be inside {self.asset_list}')
+        # else:
+        #     print(f'not  valid asset {asset_value}, needs to be inside {self.asset_list}')
 
     def _set_asset_type(self):
         file_path = Path(pipe_config.project_path)
         for each_folder in os.listdir(file_path):
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
+            else:
+                print(f'no asse {self._asset_path.format(self._asset)} found on path {each_folder}')
 
     def get_latest_version(self, modelling=False, rigging=False):
         if modelling == True:
@@ -201,8 +203,8 @@ if __name__ == '__main__':
     print(env.rig)
     print(env.model)
     print(str(env.get_latest_version(modelling=True)))
-    import pymel.core as pm
-    pm.importFile(env.get_latest_version(modelling=True))
+    # import pymel.core as pm
+    # pm.importFile(env.get_latest_version(modelling=True))
     # print(facial_definition.definition)
 
 
