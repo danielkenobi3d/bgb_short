@@ -70,6 +70,6 @@ def custom_finalize():
 
 
 if __name__ == '__main__':
-    import_reference_points()
+    load_shapes_data()
 
 

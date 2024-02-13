@@ -17,7 +17,9 @@ from RMPY.rig.biped.rig import rigToes
 from RMPY.rig.biped.rig import neckHeadSpaceSwitch
 from RMPY.rig.biped.rig import rigEyesSpaceSwitch
 from RMPY.rig import rigSingleJoint
-
+from bgb_short.rigBuilds.Ghost.rig_ghost import rigSpine
+import importlib
+importlib.reload(rigSpine)
 
 class RigBypedModel(rigBase.BaseModel):
     def __init__(self, **kwargs):
@@ -34,6 +36,7 @@ class RigBypedModel(rigBase.BaseModel):
         self.l_mustach = rigFK.RigFK()
         self.r_mustach = rigFK.RigFK()
         self.c_mustach = rigSingleJoint.RigSingleJoint()
+        self.rig_spine = None
 
 class RigByped(rigBase.RigBase):
     def __init__(self, *args, **kwargs):
@@ -94,7 +97,6 @@ class RigByped(rigBase.RigBase):
     def eye_space_switch(self):
         return self._model.eye_space_switch
 
-
     def build(self):
         # self.hip.create_point_base(*self.hip_root, name='hip')
         self.cog.create_point_base(self.hip_root[0], name='cog', depth=1)
@@ -125,7 +127,8 @@ class RigByped(rigBase.RigBase):
 
         self.cog.set_parent(self.rig_world)
         self.eyes.set_parent(self.neck_head)
-
+        self._model.rig_spine = rigSpine.RigSpine()
+        self.rig_spine.set_parent(self.cog)
         # self.create.constraint.node_base(self.spine.backward_root, self.hip.root, point=True)
         # self.create.constraint.node_base(self.cog.tip, self.hip.root, orient=True, mo=True)
 
