@@ -110,11 +110,14 @@ class Environment(object):
 
     def _set_asset_type(self):
         file_path = Path(pipe_config.project_path)
+        asset_found = False
         for each_folder in os.listdir(file_path):
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
-            else:
-                print(f'no asse {self._asset_path.format(self._asset)} found on path {each_folder}')
+                asset_found = True
+
+        if not asset_found:
+            print(f'Asset not found {self._asset} on any folder on {file_path}')
 
     def get_latest_version(self, modelling=False, rigging=False):
         if modelling == True:
