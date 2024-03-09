@@ -1,7 +1,13 @@
-from mgear.shifter import io
+
 from bgb_short.pipeline import environment
 import importlib
-from mgear.shifter import guide_manager
+try:
+    from mgear.shifter import io
+    from mgear.shifter import guide_manager
+except:
+    guide_manager=None
+    io = None
+    print('mgear not found')
 import pymel.core as pm
 from pathlib import Path
 import os
