@@ -111,7 +111,7 @@ class Environment(object):
     def _set_asset_type(self):
         file_path = Path(pipe_config.project_path)
         asset_found = False
-        for each_folder in os.listdir(file_path):
+        for each_folder in [each for each in os.listdir(file_path) if os.path.isdir(each)]:
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
                 asset_found = True
