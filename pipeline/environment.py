@@ -115,6 +115,9 @@ class Environment(object):
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
                 asset_found = True
+            else:
+                print(f'seacrching in f{each_folder}')
+
 
         if not asset_found:
             print(f'Asset not found {self._asset} on any folder on {file_path}')
