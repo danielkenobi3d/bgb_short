@@ -37,7 +37,6 @@ def custom_rig():
 def load_skinning_data():
     env = environment.Environment()
     root_node = pm.ls('geo', '*_GEO_GRP')[0]
-    print(root_node)
     list_of_objects = search_hierarchy.shape_type_in_hierarchy(root_node)
     for each in list_of_objects:
         if Path(f'{env.data}/skinClusters/{each}.json').exists():
@@ -46,25 +45,26 @@ def load_skinning_data():
 
 def load_shapes_data():
     env = environment.Environment()
-    controls_shapes = pm.ls('*_ctr', type='transform')
-
-    for each in controls_shapes:
+    scene_controls = pm.ls('*_ctr', '*_ctl', type='transform')
+    for each in scene_controls:
         if Path(f'{env.data}/nurbsCurves/{each}.json').exists():
             try:
-                data_save_load.load_curves(*controls_shapes)
+                data_save_load.load_curves(each)
             except:
                 print(f'an error ocurred loading {each}')
     controls.color_now_all_ctrls()
 
-
 def cleanup():
-    all_root_nodes = pm.ls('|*', lockedNodes=False)
-    for each in all_root_nodes:
-        if str(each) not in ['persp', 'top', 'front', 'side']:
-            if str(each) in ['environment', 'geo']:
-                each.setParent('rig')
+    pm.parent('environment', 'rig')
+    delete_objects = []
+    for each in pm.ls('|*'):
+        if each.name() != 'rig':
+            if each.getShape():
+                if pm.objectType(each.getShape()) != 'camera':
+                    delete_objects.append(each)
             else:
-                pm.delete(each)
+                delete_objects.append(each)
+    pm.delete(delete_objects)
     for each in pm.ls('*_settings*_pnt'):
         each.visibility.set(False)
 
@@ -73,7 +73,15 @@ def custom_finalize():
     pass
 
 
+def load_selection_skinning_data():
+    env = environment.Environment()
+    list_of_objects = pm.ls(selection=True)
+    for each in list_of_objects:
+        if Path(f'{env.data}/skinClusters/{each}.json').exists():
+            data_save_load.load_skin_cluster(each)
+
+
 if __name__ == '__main__':
-    load_shapes_data()
+    load_selection_skinning_data()
 
 
