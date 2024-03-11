@@ -113,14 +113,11 @@ class Environment(object):
         file_path = Path(pipe_config.project_path)
         asset_found = False
         dir_list = [each for each in os.listdir(file_path) if os.path.isdir(Path(file_path, each))]
-        print(f'folders_found {dir_list}')
         for each_folder in dir_list:
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
                 asset_found = True
-            else:
-                print(f'searching in f{each_folder}')
-
+                
         if not asset_found:
             print(f'Asset not found {self._asset} on any folder on {file_path}')
 
@@ -131,18 +128,20 @@ class Environment(object):
             list_of_publish_dir = os.listdir(Path(self.rig, self._publish_folder))
         else:
             list_of_publish_dir = os.listdir(Path(self.model, self._publish_folder))
-        print(f'loading {list_of_publish_dir}')
         latest_version_folder = None
         index = 0
         for each in list_of_publish_dir:
             if not latest_version_folder:
-                latest_version_folder = each
-                index = int(each[0:3])
-            else:
-                current_index = int(each[0:3])
-                if current_index > index:
-                    index = current_index
+                try:
+                    index = int(each[0:3])
                     latest_version_folder = each
+            else:
+                try:
+                    current_index = int(each[0:3])
+                    if current_index > index:
+                        index = current_index
+                        latest_version_folder = each
+
         files_list = os.listdir(Path(self.model, self._publish_folder, latest_version_folder))
         return Path(self.model, self._publish_folder, latest_version_folder, filter_right_file(files_list))
     
