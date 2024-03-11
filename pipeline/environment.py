@@ -117,7 +117,7 @@ class Environment(object):
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
                 asset_found = True
-                
+
         if not asset_found:
             print(f'Asset not found {self._asset} on any folder on {file_path}')
 
@@ -135,12 +135,16 @@ class Environment(object):
                 try:
                     index = int(each[0:3])
                     latest_version_folder = each
+                except:
+                    pass
             else:
                 try:
                     current_index = int(each[0:3])
                     if current_index > index:
                         index = current_index
                         latest_version_folder = each
+                except:
+                    pass
 
         files_list = os.listdir(Path(self.model, self._publish_folder, latest_version_folder))
         return Path(self.model, self._publish_folder, latest_version_folder, filter_right_file(files_list))
