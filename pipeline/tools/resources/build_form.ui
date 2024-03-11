@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>199</width>
-    <height>299</height>
+    <width>207</width>
+    <height>357</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,22 +50,51 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QPushButton" name="save_guides_button">
+           <property name="toolTip">
+            <string>saves mgear guides</string>
+           </property>
            <property name="text">
-            <string>save guides</string>
+            <string>save mgear guides</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="save_shapes_button">
+           <property name="toolTip">
+            <string>save the shapes of selected objects</string>
+           </property>
            <property name="text">
             <string>save shapes</string>
            </property>
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="load_shapes_button">
+           <property name="toolTip">
+            <string>load shapes on selected objects</string>
+           </property>
+           <property name="text">
+            <string>load shapes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="save_skin_button">
+           <property name="toolTip">
+            <string>saves the skinning of selected objects.</string>
+           </property>
            <property name="text">
             <string>save skinning</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load_skin_button">
+           <property name="toolTip">
+            <string>loads skinning of selected objects.</string>
+           </property>
+           <property name="text">
+            <string>load skinning</string>
            </property>
           </widget>
          </item>

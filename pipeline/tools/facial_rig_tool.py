@@ -15,6 +15,7 @@ from RMPY import RMblendShapesTools
 from bgb_short.pipeline import environment
 
 import importlib
+
 importlib.reload(environment)
 importlib.reload(facialRigForm)
 
@@ -32,9 +33,14 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.setWindowTitle('FacialRig')
 
         self.env = environment.Environment()
-        self.dictionary = self.env.get_variables_from_path(environment.pipe_config.default_facial_definition).definition
-        from pprint import pprint as pp
+        self.dictionary = None
+        facial_definition = self.env.get_variables_from_path(environment.pipe_config.facial_definition)
+        if 'definition' in dir(facial_definition):
+            self.dictionary = facial_definition.definition
+        else:
+            print(f'no definition found on {facial_definition.__file__}')
 
+        from pprint import pprint as pp
         self.ui.CheckBtn.clicked.connect(self.check_button_pressed)
         # self.ui.ImportFacialInterfaceBtn.clicked.connect(self.ImportFacialInterfaceBtnPressed)
         # self.ui.DeleteAttributesBtn.clicked.connect(self.deleteAttributes)

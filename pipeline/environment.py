@@ -10,6 +10,7 @@ except:
     from bgb_short.pipeline import pipe_config
 
 importlib.reload(pipe_config)
+importlib.reload(pipe_config)
 
 def filter_right_file(file_list):
     """
@@ -111,13 +112,14 @@ class Environment(object):
     def _set_asset_type(self):
         file_path = Path(pipe_config.project_path)
         asset_found = False
-        for each_folder in [each for each in os.listdir(file_path) if os.path.isdir(each)]:
+        dir_list = [each for each in os.listdir(file_path) if os.path.isdir(Path(file_path, each))]
+        print(f'folders_found {dir_list}')
+        for each_folder in dir_list:
             if self._asset_path.format(self._asset) in (os.listdir(file_path.joinpath(each_folder))):
                 self._asset_type = each_folder
                 asset_found = True
             else:
-                print(f'seacrching in f{each_folder}')
-
+                print(f'searching in f{each_folder}')
 
         if not asset_found:
             print(f'Asset not found {self._asset} on any folder on {file_path}')

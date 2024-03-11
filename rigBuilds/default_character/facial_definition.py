@@ -1,5 +1,5 @@
 prefix_geometry_list = []
-
+jaw_layer = ['upperGums', 'upperTeeth', 'bottomTeeth', 'bottomGums', 'tongue', 'character']
 definition = dict(
     jaw=dict(
         type='blend_shape_definition',

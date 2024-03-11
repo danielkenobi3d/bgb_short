@@ -58,7 +58,9 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.setWindowTitle('bgb Short Pipe')
         self.ui.save_guides_button.clicked.connect(io.export_template)
         self.ui.save_skin_button.clicked.connect(data_save_load.save_skin_cluster)
+        self.ui.load_skin_button.clicked.connect(data_save_load.load_skin_cluster)
         self.ui.save_shapes_button.clicked.connect(data_save_load.save_curve)
+        self.ui.load_shapes_button.clicked.connect(data_save_load.load_curves)
         self.ui.save_reference_file_btn.clicked.connect(self.save_reference_file)
 
         for index, each in enumerate(self.env.asset_list):
