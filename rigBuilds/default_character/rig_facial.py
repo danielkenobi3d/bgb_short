@@ -9,7 +9,6 @@ from RMPY.creators import blendShape
 from bgb_short.pipeline import environment
 
 
-
 def build():
     create_facial_rig()
     create_jaw_layers()

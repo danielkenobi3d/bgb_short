@@ -13,9 +13,12 @@ import os
 import pymel.core as pm
 from RMPY import RMblendShapesTools
 from bgb_short.pipeline import environment
-
+from RMPY.snippets import blendshape_extraction
+from RMPY.snippets import blendshape_split
 import importlib
-
+from RMPY.rig import rigBlendShapeControls
+from RMPY.rig import rigFacial
+importlib.reload(facialRigForm)
 importlib.reload(environment)
 importlib.reload(facialRigForm)
 
@@ -37,6 +40,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         facial_definition = self.env.get_variables_from_path(environment.pipe_config.facial_definition)
         if 'definition' in dir(facial_definition):
             self.dictionary = facial_definition.definition
+            self.prefix_geometry_list = facial_definition.prefix_geometry_list
         else:
             print(f'no definition found on {facial_definition.__file__}')
 
@@ -48,6 +52,14 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.ui.renameRightBtn.clicked.connect(self.rename_right_btn)
         self.ui.LinkAllBtn.clicked.connect(self.link_all_dictionaries)
         self.ui.createMissingBtn.clicked.connect(self.create_missing_shapes)
+
+        self.ui.extract_blendshapes_btn.clicked.connect(self.extract_blendShapes)
+        self.ui.copy_vertex_position_btn.clicked.connect(self.copy_vertex_position)
+        self.ui.split_by_axis_btn.clicked.connect(self.split_by_axis)
+
+        self.ui.build_facial_controls_btn.clicked.connect(self.build_facial_controls)
+        self.ui.connectRigBtn.clicked.connect(self.connect_to_rig)
+
         self.ui.UseSufixChkBx.stateChanged.connect(self.use_sufix_chk_bx_state_changed)
         for eachItem in sorted(self.dictionary):
             self.ui.ListCBx.addItem(eachItem)
@@ -55,6 +67,26 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         self.Manager = RMblendShapesTools.BSManager()
 
         self.ui.PrefixLineEdit.textChanged.connect(self.check_button_pressed)
+
+    def build_facial_controls(self):
+        rigBlendShapeControls.RigBlendShapeControls(root='C_facialControls_reference_pnt')
+
+    def connect_to_rig(self):
+        rigFacial.RigFacial(self.dictionary, prefix_geometry_list=self.prefix_geometry_list)
+
+    def extract_blendShapes(self):
+        blendshape_extraction.duplicate_targets('')
+
+    def copy_vertex_position(self):
+        selection = pm.ls(selection=True)
+        blendshape_split.copy_vertex_position(*selection)
+
+    def split_by_axis(self):
+        selection = pm.ls(selection=True)
+        if pm.objExists('character'):
+            split_blendshape('character', str(selection[0]))
+        else:
+            print('no base "character" geo exists')
 
     def use_sufix_chk_bx_state_changed(self):
         if self.ui.UseSufixChkBx.checkState() == Qt.CheckState.Checked:

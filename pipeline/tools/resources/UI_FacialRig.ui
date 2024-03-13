@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>236</width>
-    <height>366</height>
+    <width>275</width>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -91,7 +91,43 @@
         <item>
          <widget class="QPushButton" name="createMissingBtn">
           <property name="text">
-           <string>CreateMissingAsProxy</string>
+           <string>Create  missing as proxy</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QPushButton" name="copy_vertex_position_btn">
+          <property name="text">
+           <string>Copy vertex position</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="extract_blendshapes_btn">
+          <property name="text">
+           <string>Extract blendshapes</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="build_facial_controls_btn">
+          <property name="text">
+           <string>Build facial controls</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="connectRigBtn">
+          <property name="text">
+           <string>Connect to rig</string>
           </property>
          </widget>
         </item>
