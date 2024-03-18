@@ -143,9 +143,6 @@ class RigByped(rigBase.RigBase):
         self.l_mustach.rename_as_skinned_joints()
 
 
-if __name__ == '__main__':
-    rig_biped = RigByped()
-    rig_biped.build()
 
 
 
