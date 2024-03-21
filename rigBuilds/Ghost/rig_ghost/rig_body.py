@@ -32,7 +32,11 @@ class RigBypedModel(rigBase.BaseModel):
         self.cog = rigProp.RigProp()
         self.rig_world = rigWorld.RigWorld()
         self.eyes = rigEyesAim.RigEyesAim()
+        self.l_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
+        self.r_arm_space_switch = armSpaceSwitch.ArmSpaceSwitch()
         self.eye_space_switch = rigEyesSpaceSwitch.EyeSpaceSwitch()
+        self.l_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
+        self.r_hand_space_switch = handSpaceSwitch.HandSpaceSwitch()
         self.l_mustach = rigFK.RigFK()
         self.r_mustach = rigFK.RigFK()
         self.c_mustach = rigSingleJoint.RigSingleJoint()
@@ -113,6 +117,10 @@ class RigByped(rigBase.RigBase):
         self.r_hand.create_point_base(*[each.format('R') for each in self.hand_root])
         self.r_hand.set_parent(self.r_arm)
 
+        self.l_arm_space_switch.build(self.l_arm, self.rig_world, self.cog)
+        self.l_hand_space_switch.build(self.l_hand, self.rig_world, self.l_arm)
+        self.r_arm_space_switch.build(self.r_arm, self.rig_world, self.cog)
+        self.r_hand_space_switch.build(self.r_hand, self.rig_world, self.r_arm)
         self.neck_head.create_point_base(*self.neck_root)
         self.r_mustach.create_point_base(*[each.format('R') for each in self.mustach_root])
         self.l_mustach.create_point_base(*[each.format('L') for each in self.mustach_root])
@@ -121,7 +129,7 @@ class RigByped(rigBase.RigBase):
         self.r_mustach.set_parent(self.c_mustach)
         self.l_mustach.set_parent(self.c_mustach)
 
-        self.eyes.create_point_base(*self.eyes_root)
+        self.eyes.create_point_base(*self.eyes_root, aim_distance=3)
         self.eye_space_switch.build(self.eyes, self.neck_head, self.rig_world)
         self.neck_head.set_parent(self.cog)
 

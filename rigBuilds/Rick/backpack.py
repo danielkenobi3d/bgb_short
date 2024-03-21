@@ -6,12 +6,14 @@ from RMPY.rig import rigUVPin
 import importlib
 import pymel.core as pm
 importlib.reload(rigProp)
+importlib.reload(rigSingleJoint)
 
 def build():
 
     main_backpack = rigProp.RigProp()
     main_backpack.create_point_base('C_backPack00_reference_pnt', centered=True, size=.5, static=True)
     main_backpack.zero_joint
+    main_backpack.set_parent('spine_C0_3_jnt')
 
     main_backpack_top = rigProp.RigProp()
     main_backpack_top.create_point_base('C_backPackTop00_reference_pnt', centered=True, size=.5, static=True)
@@ -19,21 +21,24 @@ def build():
     main_backpack_top.set_parent(main_backpack)
     pm.parentConstraint(main_backpack.joints[-1], main_backpack_top.reset_joints[0], mo=True)
 
-
     main_strap_backpack = rigSingleJoint.RigSingleJoint()
     main_strap_backpack.create_point_base('C_backpackSmallStrapMain00_reference_pnt', centered=True, size=.5, static=True)
     main_strap_backpack.set_parent(main_backpack_top)
+    pm.parentConstraint(main_backpack_top.joints[-1], main_strap_backpack.reset_joints[0], mo=True)
 
     for each_child in pm.ls('C_smallStrap00_reference_grp')[0].getChildren():
         small_strap_rig = rigSingleJoint.RigSingleJoint(each_child)
         small_strap_rig.create_point_base(each_child, centered=True, size=.1, static=True)
-        small_strap_rig.set_parent(main_strap_backpack)
+        small_strap_rig.set_parent(main_strap_backpack.controls[-1])
+        pm.parentConstraint(main_strap_backpack.joints[-1], small_strap_rig.reset_joints[0], mo=True)
+
+
 
     for each_strap in pm.ls('L_straps00_reference_grp', 'R_straps00_reference_grp'):
         start = 65
         for each_root_point in each_strap.getChildren():
-            strap_rig = rigProp.RigProp()
-            strap_rig.create_point_base(each_root_point,name=f'control{chr(start)}', centered=True, size=.3, static=True)
+            strap_rig = rigSingleJoint.RigSingleJoint()
+            strap_rig.create_point_base(each_root_point, name=f'control{chr(start)}', centered=True, size=.3, static=True)
             uv_pin_rig = rigUVPin.RigUVPin(rig_system=strap_rig.rig_system)
             uv_pin_rig.create_point_base(strap_rig.reset_controls[0], geometry='C_shirt_001_HIGH')
             uv_pin_rig.clean_up()
@@ -48,18 +53,22 @@ def build():
                    'C_zipperHandleB_001_HIGH', 'C_zipperBaseA_001_HIGH', 'C_zipperHandleA_001_HIGH',
                    'C_decoration_001_HIGH', 'C_strap_001_HIGH', 'C_bagB_001_HIGH',
                    'C_bagA_001_HIGH', 'C_zipperB_001_HIGH', 'C_zipperA_001_HIGH']
-    static_geo_rig = rigStaticLayer.StaticLayer(*static_geos, name='fullBackpackStatic')
-    try :
-        data_save_load.load_skin_cluster(static_geo_rig.static_geometries)
-    except:
-        pass
 
-    only_straps_geos = ['R_belt_001_HIGH', 'L_belt_001_HIGH', 'L_buckleB_001_HIGH', 'R_buckleB_001_HIGH']
+    static_geo_rig = rigStaticLayer.StaticLayer(*static_geos, name='fullBackpackStatic')
+    for each_geo in static_geo_rig.static_geometries:
+        try :
+            data_save_load.load_skin_cluster(each_geo)
+        except:
+            pass
+
+    only_straps_geos = ['R_belt_001_HIGH', 'L_belt_001_HIGH', 'L_buckleB_001_HIGH', 'R_buckleB_001_HIGH', 'L_buckleA_001_HIGH', 'R_buckleA_001_HIGH']
     static_strap_geo_rig = rigStaticLayer.StaticLayer(*only_straps_geos, name='strapsStatic')
-    try:
-        data_save_load.load_skin_cluster(static_strap_geo_rig.static_geometries)
-    except:
-        pass
+
+    for each_geo in static_strap_geo_rig.static_geometries:
+        try:
+            data_save_load.load_skin_cluster(each_geo)
+        except:
+            pass
 
 
 if __name__=='__main__':
