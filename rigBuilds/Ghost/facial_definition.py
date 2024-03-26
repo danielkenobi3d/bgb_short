@@ -1,4 +1,5 @@
-prefix_geometry_list = []
+prefix_geometry_list = ['Leye', 'Reye']
+
 jaw_layer = ['upperGums', 'upperTeeth', 'bottomTeeth', 'bottomGums', 'tongue', 'character']
 direct_blendshape = {
     'character': 'C_BODY_02_HIGH'
@@ -16,12 +17,30 @@ definition = dict(
                          LInBrowDwn={'connection': 'translateY', 'value': -1},
 
                          ),
-        attributes=dict(translateY={'type': 'float', 'min': -10, 'max': 10},
-                        translateX={'type': 'float', 'min': -10, 'max': 10},
-                        eyeCls={'type': 'float', 'min': -10, 'max': 10},
+        attributes=dict(translateY={'type': 'float', 'min': -1, 'max': 1},
+                        translateX={'type': 'float', 'min': -1, 'max': 1},
+                        eyeCls={'type': 'float', 'min': -1, 'max': 1},
                         ),
         order=['translateX', 'translateY']
         ),
+    squint=dict(
+        type='blend_shape_definition',
+        isSymetrical=True,
+        baseMesh='character',
+        control='L_squint_facial_ctrl',
+        blendShapes=dict(Lsquint={'connection': 'translateX', 'value': 2}),
+        attributes=dict(translateX={'type': 'float', 'min': 0, 'max': 2}),
+        order=['translateX']
+        ),
+    corrugator=dict(
+    type='blend_shape_definition',
+    isSymetrical=False,
+    baseMesh='character',
+    control='C_corrugator_facial_ctrl',
+    blendShapes=dict(browCorrugator={'connection': 'translateX', 'value': 2}),
+    attributes=dict(translateX={'type': 'float', 'min': 0, 'max': 2}),
+    order=['translateX']
+ )
 )
 
 definition_example = dict(
