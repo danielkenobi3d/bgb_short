@@ -3,6 +3,7 @@ from pathlib import Path
 import pymel.core as pm
 import importlib
 import pkgutil
+import re
 
 try:
     import pipe_config
@@ -12,6 +13,17 @@ except:
 importlib.reload(pipe_config)
 importlib.reload(pipe_config)
 
+
+def max_number_in_string(test_string):
+    match_object = re.split(r"([0-9]+)", test_string)
+    match_list_no_digits = re.split(r"[0-9]+", test_string)
+    for each in match_list_no_digits:
+        match_object.remove(each)
+    value=int(match_object[0])
+    for each in match_object[1:]:
+        if int(each) > value:
+            value=int(each)
+    return value
 def filter_right_file(file_list):
     """
     finds the correct file path to import it will import the smallest in length maya file
@@ -130,22 +142,24 @@ class Environment(object):
             list_of_publish_dir = os.listdir(Path(self.model, self._publish_folder))
         latest_version_folder = None
         index = 0
+
+
         for each in list_of_publish_dir:
             if not latest_version_folder:
                 try:
-                    index = int(each[0:3])
+                    index = max_number_in_string(each)
                     latest_version_folder = each
                 except:
                     pass
             else:
                 try:
-                    current_index = int(each[0:3])
+                    current_index = max_number_in_string(each)
                     if current_index > index:
                         index = current_index
                         latest_version_folder = each
                 except:
                     pass
-
+        print(f'{self.model=}, {self._publish_folder=}, {latest_version_folder=}')
         files_list = os.listdir(Path(self.model, self._publish_folder, latest_version_folder))
         return Path(self.model, self._publish_folder, latest_version_folder, filter_right_file(files_list))
     

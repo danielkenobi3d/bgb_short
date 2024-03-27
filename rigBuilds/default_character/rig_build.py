@@ -36,7 +36,7 @@ def custom_rig():
 
 def load_skinning_data():
     env = environment.Environment()
-    root_node = pm.ls('geo', '*_GEO_GRP')[0]
+    root_node = pm.ls('geo', '*_GEO_GRP', type='transform')[0]
     list_of_objects = search_hierarchy.shape_type_in_hierarchy(root_node)
     for each in list_of_objects:
         if Path(f'{env.data}/skinClusters/{each}.json').exists():
