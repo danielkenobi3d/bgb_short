@@ -61,6 +61,10 @@ class RigSpine(rigBase.RigBase):
         self.rig_fk.controls[0].decay.set(10)
         self.rig_fk.controls[0].decay_limit.set(4)
 
+        pm.orientConstraint(self.rig_fk.controls[0], self.rig_spline_ik.reset_controls[0], mo=True)
+        pm.orientConstraint(self.rig_fk.controls[-1], self.rig_spline_ik.reset_controls[-1], mo=True)
+        self.joints.extend(self.rig_spline_ik.joints)
+
 
 
 

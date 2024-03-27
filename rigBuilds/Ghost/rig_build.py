@@ -8,6 +8,11 @@ from RMPY.rig import rigFacial
 from RMPY.rig import rigHierarchy
 from RMPY.creators import creators
 importlib.reload(creators)
+importlib.reload(rigFacial)
+importlib.reload(rig_body)
+
+
+
 def create_facial_rig():
     env = environment.Environment()
     l_ffd, l_lattice, l_lattice_base = creators.lattice.geo_base('L_EYE_01_HIGH', name='LEye')
@@ -36,9 +41,6 @@ def create_facial_rig():
         c_blendshape.node.attr(each[4:]) >> L_blendshape.node.attr(each)
 
 
-
-
-
 def static_connection(source, destination):
     destination_bs = blendShape.BlendShape.by_node(destination)
     destination_bs.add_as_target(source)
@@ -46,10 +48,13 @@ def static_connection(source, destination):
     pm.parent(source, rig_hierarchy.geometry)
     pm.setAttr('{}.visibility'.format(source), False)
 
+
 def custom_rig():
     rig_biped = rig_body.RigByped()
     rig_biped.build()
     create_facial_rig()
-    pm.rename('GHOST_grp', 'GHOST_GEO_GRP')
+    # pm.rename('GHOST_grp', 'GHOST_GEO_GRP')
     pm.parent('GHOST_GEO_GRP', 'rig')
+    pm.parent('C_mainA00_square_grp', 'rig')
     pm.parent('environment', 'rig')
+    pm.parent(['Leye', 'C_LEye02_COG_ffd', 'Reye', 'C_REye02_COG_ffd'], 'C_kinematics00_eyes_grp')

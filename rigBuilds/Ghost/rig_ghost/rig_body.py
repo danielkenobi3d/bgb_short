@@ -149,6 +149,7 @@ class RigByped(rigBase.RigBase):
         self.neck_head.rename_as_skinned_joints()
         self.r_mustach.rename_as_skinned_joints()
         self.l_mustach.rename_as_skinned_joints()
+        self.rig_spine.rename_as_skinned_joints()
 
 
 
