@@ -18,9 +18,9 @@ from RMPY.snippets import blendshape_split
 import importlib
 from RMPY.rig import rigBlendShapeControls
 from RMPY.rig import rigFacial
-importlib.reload(facialRigForm)
-importlib.reload(environment)
-importlib.reload(facialRigForm)
+importlib.reload(blendshape_extraction)
+importlib.reload(blendshape_split)
+
 
 
 def getMayaWindow():
@@ -75,7 +75,12 @@ class Main(MayaQWidgetDockableMixin, QDialog):
         rigFacial.RigFacial(self.dictionary, prefix_geometry_list=self.prefix_geometry_list)
 
     def extract_blendShapes(self):
-        blendshape_extraction.duplicate_targets('')
+        selection = pm.ls(selection=True)
+        if len(selection) > 1:
+            for each in selection[1:]:
+                blendshape_extraction.duplicate_targets(prefix=str(each), geometry_node = selection[0], duplicated_object = each)
+        else:
+            blendshape_extraction.duplicate_targets()
 
     def copy_vertex_position(self):
         selection = pm.ls(selection=True)
@@ -84,7 +89,7 @@ class Main(MayaQWidgetDockableMixin, QDialog):
     def split_by_axis(self):
         selection = pm.ls(selection=True)
         if pm.objExists('character'):
-            split_blendshape('character', str(selection[0]))
+            blendshape_split.split_blendshape('character', str(selection[0]))
         else:
             print('no base "character" geo exists')
 

@@ -15,7 +15,6 @@ definition = dict(
                          LOutBrowDwn={'connection': 'translateX', 'value': -1},
                          LInBrowUp={'connection': 'translateY', 'value': 1},
                          LInBrowDwn={'connection': 'translateY', 'value': -1},
-
                          ),
         attributes=dict(translateY={'type': 'float', 'min': -1, 'max': 1},
                         translateX={'type': 'float', 'min': -1, 'max': 1},
