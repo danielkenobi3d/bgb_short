@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>207</width>
-    <height>357</height>
+    <width>206</width>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,13 +29,20 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
        <string>build steps</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="reloadButton">
+         <property name="text">
+          <string>reload</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QListWidget" name="listWidget"/>
        </item>
@@ -110,6 +117,16 @@
                <string>save reference file</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="load_reference_file_btn">
+              <property name="text">
+               <string>load reference file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_2"/>
             </item>
             <item>
              <widget class="QLineEdit" name="file_name_lineEdit"/>
